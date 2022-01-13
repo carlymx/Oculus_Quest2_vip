@@ -1,0 +1,108 @@
+#!/bin/bash
+# Quest2VIP_Installer - Un script para la ayuda de la instalación de lo esencial.
+# by CaRLyMx - carlymx@gmail.com
+# project: https://github.com/carlymx/...
+
+#Variables;
+NOMBRE=VIP
+
+# Funcion de Bienvenida:
+FUNCION_INICIO(){
+# Bienvenida:
+dialog  --backtitle "Quest 2 VIP Installer [v.0.1]" \
+        --title "IMPORTANTE:" \
+        --ok-label "Siguiente" \
+        --msgbox "Este Script intenta automatizar las fases necesarias para poner a punto nuestras Oculus Quest 2. Es necesario tener ciertos requisitos previos antes de ejecutar este script. \n\n Actualmente este scripts estan en fase de desarrollo, disculpe las molestias" 15 60
+
+#Requisitos previos 1/2:
+dialog  --backtitle "Quest 2 VIP Installer [v.0.1]" \
+        --title "REQUISITOS PREVIOS:" \
+        --ok-label "Siguiente" \
+        --msgbox "Se necesita tener los siguientes requisitos cumplidos para proceder con la ejecución de este Script:\n\n [ ] - Unas Oculus Quest 2 :)\n [ ] - Modo Desarrollador activado\n [ ] - Drivers ADB Instalados\n [ ] - ..." 15 60
+
+#Requisitos previos 2/2:
+dialog  --backtitle "Quest 2 VIP Installer [v.0.1]" \
+        --title "REQUISITOS PREVIOS:" \
+        --ok-label "Siguiente" \
+        --msgbox "Ahora antes de conectarlas indique el nombre de usuario que quiere que tenga su avatar en las aplicaciones VIP: \nRecuerda que discrimina Mayusculas y Minusculas. \nSuele usarse el nombre del avatar de tu perfil de Oculus." 15 60
+FUNCION_NOMBRE
+}
+
+#Función - Nombre del avatar:
+FUNCION_NOMBRE() {
+NOMBRE=$(dialog --stdout \
+                --backtitle "Quest 2 VIP Installer [v.0.1]" \
+                --title "Nombre del avatar:" \
+                --ok-label "Siguiente" \
+                --inputbox "Escribe el nombre de tu avatar:" 0 0 2>&1)
+FUNCION_COMPROBAR
+}
+
+# Función comprobar nombre avatar:
+FUNCION_COMPROBAR(){
+dialog  --backtitle "Quest 2 VIP Installer [v.0.1]" \
+        --title "Su nombre de Avatar:" \
+        --yesno "El nombre para su avatar será: $NOMBRE \n\n ¿Es correcto?" 0 0
+
+# Si la respuesta es Si=continua, si la respuesta es NO=Vuelve a la Función.
+ans=$?
+if [ $ans -eq 0 ]
+then
+    FUNCION_CONECTAR
+else
+    FUNCION_NOMBRE
+fi
+}
+
+FUNCION_CONECTAR(){
+# Conexión:
+dialog  --backtitle "Quest 2 VIP Installer [v.0.1]" \
+        --title "CONEXIÓN:" \
+        --yesno "Ahora. Enciende y despúes conecta el visor Oculus Quest 2 al ordenador y pulsa siguiente.\n En proceso comenzara y te avisara cuando haya concluido. ¿Estas seguro que quieres continuar?" 0 0
+
+# Si la respuesta es Si=continua, si la respuesta es NO=Vuelve a la Función.
+ans=$?
+if [ $ans -eq 0 ]
+then
+    FUNCION_HACK
+else
+    FUNCION_FIN
+fi
+}
+
+FUNCION_HACK(){
+@echo off
+# Acepta la Depuración USB
+adb shell svc usb setFunctions mtp true
+# crea el archivo json y lo modifica con el nombre del usuario
+touch user.json
+
+# configura el nombre en el visor
+adb shell settings put global username $NOMBRE
+# Instalas APKs
+adb install -r ./data/e64846.apk
+adb install -r ./data/t56474.apk
+adb install -r ./data/p87654.apk
+}
+
+
+
+# Funcion Fin:
+FUNCION_FIN(){
+# Hacer una pausa (segundos)
+ # sleep 1
+# Limpiar Pantalla
+clear
+# Crea una linea en blanco en el Command Prond
+echo -e "\n"
+}
+
+## INICIAR PROGRAMA ##
+FUNCION_INICIO
+
+
+# REFERENCIAS:
+# https://aplicacionesysistemas.com/dialog-crear-menus-tus-scripts/
+#
+#
+#
